@@ -22,8 +22,8 @@ let p_arr = [asyncFn(3), asyncFn(2), asyncFn(1), asyncFn(4), asyncFn(5), asyncFn
 
 class PromRunner {
     constructor(tasks, count) {
-        this.tasks = tasks,
-            this.running = [];
+        this.tasks = tasks;
+        this.running = [];
         this.completed = [];
         this.max = count;
     }

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Parcel Sandbox</title>
+    <meta charset="UTF-8" />
+</head>
+
+<body>
+    <div>
+        <h5>#1. Create a custom Promise</h5>
+        <ul>
+            <li>
+                Implement a custom promise
+            </li>
+            <li>
+                Use Publisher Subscriber model to Achive
+            </li>
+
+        </ul>
+        <h5>#2. Create rate limiter</h5>
+        <ul>
+            <li>
+                Based on number of promise
+            </li>
+            <li>
+                Allow n promise to excecute simultanously
+            </li>
+            <li>
+                Maintain a queue such that once the promise is resolved, next one should start executing.
+            </li>
+
+        </ul>
+    </div>
+
+    <div>
+        <h4>Async Promise Chainig demo</h4>
+        <label>First:</label>
+        <span id="first"></span>
+        <label>Second:</label>
+        <span id="second"></span>
+        <label>Third:</label>
+        <span id="third"></span>
+    </div>
+    <div>
+        <h4>Promise Rate Limiter Demo</h4>
+        <div id="ratelimit">
+
+        </div>
+    </div>
+    <script type="text/javascript">
+        window.onload = () => {
+            function set(id, value) {
+                document.getElementById(id).innerHTML = value;
+                return value;
+            }
+
+            // Custom Promise class
+            class CustomPromise {
+                // Declare private fields
+                #value; // Value to resolve
+                #isResolved = false; // check if promise is resolved
+                #consumers = []; // list of consumers to current promise.
+                #deferred = {}; // list of deffred/Chianed promises.
+                constructor(promFn) {
+                    promFn(this.resolve);
+                }
+
+                resolve = (val) => {
+                    if (this.#isResolved) return; // Return if already resolved 
+
+                    // Loop through all consumer when the promise is resolved.
+                    while (this.#consumers.length) {
+                        const cb = this.#consumers.shift();
+                        // Call the cb and get value
+                        const value = cb(val);
+
+                        //Check if this had a chained promise, resolve if found.
+                        if (this.#deferred[cb]) {
+                            this.#deferred[cb](value)
+                        }
+                    }
+                    this.#isResolved = true; // Mark promise as resolved
+                };
+
+                then = (cb) => {
+                    this.#consumers.push(cb); // Add callback to consumer list
+                    return new this.constructor((res) => {
+                        this.#deferred[cb] = res;
+                    }); // return new deferred promise for chaining
+                }
+            }
+
+            const a = new CustomPromise((res) => {
+                setTimeout(() => res(100), 2000);
+            }).then((v) => set("first", v));
+            a.then((v) => v + 100).then((v) => set("second", v));
+
+            a.then((v) => v + 200).then((v) => set("third", v));
+
+
+            // A factory to create custom promises
+            function promiseGeneratorbyTime(name, v) {
+
+                //DOM manipulation to show progress ... Can be ignored :-p
+                let rl = document.getElementById('ratelimit');
+                let e = document.createElement('p');
+                e.innerText = `${name} time ${v * 1000} ms --> `;
+                let status = document.createElement('span');
+                status.setAttribute('id', name)
+                status.innerText = `PENDING :-/`;
+                e.appendChild(status)
+                rl.appendChild(e);
+
+                // Return a custom promise which will resolve after v secs
+                return function () {
+                    return new CustomPromise((resolve) => {
+                        set(name, 'RUNNING :-O')
+                        setTimeout(function () {
+                            console.log(v);
+                            resolve(v);
+                            set(name, 'RESOLVED :-)')
+                        }, v * 1000)
+                    }
+                    );
+                }
+            }
+
+            //Create and array of promises
+            let promArry = [promiseGeneratorbyTime('prom1', 3), promiseGeneratorbyTime('prom2', 2),
+            promiseGeneratorbyTime('prom3', 1), promiseGeneratorbyTime('prom4', 4),
+            promiseGeneratorbyTime('prom5', 5), promiseGeneratorbyTime('prom6', 2)];
+
+            class PromRunner {
+                constructor(tasks, count) {
+                    this.tasks = tasks;
+                    this.running = [];
+                    this.completed = [];
+                    this.max = count;
+                }
+
+                // Helper method to chech if more promise cna be queued
+                isQueueFree() {
+                    return (this.running.length < this.max) && this.tasks.length
+                }
+                run() {
+                    // Check if we can run more ppromises
+                    while (this.isQueueFree()) {
+                        const prom = this.tasks.shift(); // Remove promise from queue
+                        prom().then(() => {
+                            this.running.shift();// Remove from running queue
+                            this.run();
+                        });
+                        this.running.push(prom); // Push to running queue
+                    }
+                }
+            }
+
+            //Create a promise runner to run 2 promise in paraller
+            //Change the 2nd parameter to increase size of runner queue
+            const promRunner = new PromRunner(promArry, 2);
+
+            //Execute the runner
+            promRunner.run();
+        };
+    </script>
+</body>
+
+</html>

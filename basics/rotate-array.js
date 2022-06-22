@@ -7,7 +7,6 @@ export function RotateArray(arr) {
     }
 
     return ans
-
 }
 
 

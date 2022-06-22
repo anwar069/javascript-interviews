@@ -1,3 +1,5 @@
+//Check if number has a pair (1,-1) (2,-2) etc are pair
+//If pair not exits, number is lonely
 export function findLonely(arr) {
     let lonelyNum = [];
     for (let index = 0; index < arr.length; index++) {
