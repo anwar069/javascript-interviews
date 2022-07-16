@@ -1,3 +1,9 @@
+// Build a word from the array of sequences
+// No duplicate character. Where X-Y means it will appear XY in the word. X will be followed by Y.
+// String[] arr = {“A-N”, "W-A”, “S-W”}; //SWAN 
+// String[] arr = {“U-N”, “G-A”, “R-Y”, “H-U”, “N-G”, “A-R”}; //HUNGARY
+// String[] arr = {“L-A”, “A-N”, “T-Z”, “Z-E” , “N-D”, “S-W”, “E-R”, “R-L”, “W-I”, “I-T”}; ? 
+
 function getWord(arr) {
     let m = {}, m2 = {}, startKey;
 
