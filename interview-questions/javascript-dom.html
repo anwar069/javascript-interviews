@@ -1,0 +1,109 @@
+< !DOCTYPE html>
+    <html>
+
+    <head>
+        <title>Parcel Sandbox</title>
+        <meta charset="UTF-8" />
+        // Use a seperate Script file to make these work
+        <script>
+            import "./styles.css";
+
+            function btnClick() {
+                alert("Button Clicked");
+            }
+
+            function alertInout() {
+                const elem = document.getElementById("txt-input");
+                alert(elem.value);
+            }
+
+            function textChange(e) {
+                console.log("Text Changed to ", e.target.value);
+            }
+
+            function checkChange(e) {
+                console.log("Text Changed to ", e.target.checked);
+            }
+
+            function addElenment() {
+                const elem = document.getElementById("txt-add");
+                const container = document.getElementById("e-container");
+
+                let newElems = [];
+                for (let i = 0; i < elem.value; i++) {
+                    let e = document.createElement("p");
+                    e.innerHTML = "elem" + i;
+                    newElems.push(e);
+                }
+
+                // Remove all child along with evwnt handlers
+                // InnerHTML  = '' doest remove event handlers
+                while (container.firstChild) {
+                    container.removeChild(container.lastChild);
+                }
+
+                // Append new ones
+                container.append(...newElems);
+            }
+
+            (function init() {
+                document.getElementById("btn-test").addEventListener("click", btnClick);
+                document
+                    .getElementById("txt-input")
+                    .addEventListener("keyup", textChange);
+                document
+                    .getElementById("btn-alert")
+                    .addEventListener("click", alertInout);
+                document
+                    .getElementById("check-input")
+                    .addEventListener("change", checkChange);
+                document
+                    .getElementById("btn-add")
+                    .addEventListener("click", addElenment);
+            })();
+        </script>
+    </head>
+
+    <body>
+        <div id="app">
+            <h4>Try to refresh page if event listners are not working</h4>
+
+            <button id="btn-test">
+                Button Test
+            </button>
+            <input type="text" id="txt-input" />
+            <button id="btn-alert">
+                ALert Input
+            </button>
+            <input type="checkbox" id="check-input" aria-label="Hello" />
+            <label for="check-input"> Check me</label>
+
+            <h4>Radio box group is created by ID</h4>
+            <div>
+                <input type="radio" id="huey" name="drone" value="huey" checked />
+                <label for="huey">Huey</label>
+            </div>
+
+            <div>
+                <input type="radio" id="dewey" name="drone" value="dewey" />
+                <label for="dewey">Dewey</label>
+            </div>
+
+            <div>
+                <input type="radio" id="louie" name="drone" value="louie" />
+                <label for="louie">Louie</label>
+            </div>
+
+            <div>
+                <input type="number" id="txt-add" />
+                <button id="btn-add">
+                    Add N elements
+                </button>
+                <div id="e-container"></div>
+            </div>
+        </div>
+
+        <script src="src/index.js"></script>
+    </body>
+
+    </html>
