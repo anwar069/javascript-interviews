@@ -17,6 +17,8 @@ function findMiss(arr) {
 findMiss([1, 2, 3, 4, 5, 6, 8, 9, 10]);
 
 
+
+/* Guew the bwlow ouput */
 // *****************************************************
 
 let flag = true;
