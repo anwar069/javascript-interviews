@@ -1,4 +1,4 @@
-import { linkedLinkedToArray, ListNode, arrayToLinkedList } from "./helper.js";
+import { linkedLinkedToArray, ListNode, arrayToLinkedList } from "../helper.js";
 
 
 function reverse(head) {
